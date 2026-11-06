@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giftly · sell gift cards</title>
+    <!-- Font Awesome 6 (free) for crisp icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ----- GLOBAL RESET & VARIABLES ----- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: #f9fbfd;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        /* main card container – subtle glassy effect */
+        .gift-store {
+            max-width: 1300px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(4px);
+            border-radius: 3rem;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.7);
+        }
+
+        /* ----- HEADER / BRANDING ----- */
+        .store-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 3rem;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .brand i {
+            font-size: 2.6rem;
+            color: #1e3c72;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .brand h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: #0b1e33;
+        }
+
+        .brand span {
+            font-weight: 400;
+            color: #4a5b6e;
+            font-size: 1rem;
+            margin-left: 0.25rem;
+        }
+
+        .cart-badge {
+            background: #ffffff;
+            border-radius: 100px;
+            padding: 0.7rem 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            box-shadow: 0 8px 18px -8px rgba(0, 20, 40, 0.2);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            font-weight: 500;
+            color: #1e2f44;
+            transition: 0.2s ease;
+            cursor: default;
+        }
+
+        .cart-badge i {
+            color: #2a5298;
+            font-size: 1.2rem;
+        }
+
+        .cart-badge .item-count {
+            background: #1e3c72;
+            color: white;
+            border-radius: 40px;
+            padding: 0.15rem 0.7rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-left: 0.2rem;
+        }
+
+        /* ----- SECTION TITLE ----- */
+        .section-title {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .section-title h2 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: #0b1e33;
+            letter-spacing: -0.02em;
+        }
+
+        .section-title p {
+            color: #4b6379;
+            font-size: 1rem;
+            background: rgba(42, 82, 152, 0.06);
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            font-weight: 400;
+        }
+
+        /* ----- GIFT CARD GRID (main product showcase) ----- */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem 1.8rem;
+            margin-bottom: 3.5rem;
+        }
+
+        /* individual gift card – premium design */
+        .gift-card {
+            background: #ffffff;
+            border-radius: 2rem;
+            padding: 1.8rem 1.5rem 1.5rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.25s ease;
+            box-shadow: 0 15px 30px -12px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gift-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 30px 45px -18px rgba(0, 30, 60, 0.2), 0 0 0 1px rgba(42, 82, 152, 0.15);
+            border-color: rgba(42, 82, 152, 0.1);
+        }
+
+        /* decorative brand stripe */
+        .card-stripe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, #1e3c72, #3b6cb0, #6ea8e0);
+        }
+
+        .gift-card .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 1.5rem;
+            margin-top: 0.3rem;
+        }
+
+        .gift-card .brand-logo i {
+            font-size: 2.2rem;
+            color: #1e3c72;
+        }
+
+        .gift-card .brand-logo .brand-name {
+            font-weight: 700;
+            font-size: 1.35rem;
+            letter-spacing: -0.02em;
+            color: #1a2b3c;
+        }
+
+        .gift-card .brand-logo .brand-name small {
+            font-size: 0.7rem;
+            font-weight: 500;
+            background: #eef4ff;
+            color: #1e3c72;
+            padding: 0.15rem 0.45rem;
+            border-radius: 30px;
+            margin-left: 0.3rem;
+            vertical-align: middle;
+        }
+
+        /* card value & price */
+        .card-value {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 1.2rem;
+        }
+
+        .card-value .amount {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #0a1e30;
+            letter-spacing: -0.03em;
+            line-height: 1;
+        }
+
+        .card-value .amount sup {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2a5298;
+            margin-right: 0.15rem;
+        }
+
+        .card-value .price-tag {
+            background: #ecf3fa;
+            color: #1e3c72;
+            padding: 0.4rem 0.9rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            border: 1px solid rgba(42, 82, 152, 0.1);
+        }
+
+        .card-desc {
+            color: #4f657b;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        /* action row: buy button + details */
+        .card-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+        }
+
+        .buy-btn {
+            background: #1e3c72;
+            border: none;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            cursor: pointer;
+            transition: 0.2s ease;
+            box-shadow: 0 8px 18px -8px rgba(30, 60, 114, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            letter-spacing: -0.01em;
+        }
+
+        .buy-btn i {
+            font-size: 0.95rem;
+        }
+
+        .buy-btn:hover {
+            background: #112f5a;
+            transform: scale(1.02);
+            box-shadow: 0 12px 22px -10px #1e3c72;
+        }
+
+        .buy-btn:active {
+            transform: scale(0.98);
+        }
+
+        .details-link {
+            color: #4f657b;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-weight: 500;
+            transition: 0.2s;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0.4rem 0.2rem;
+        }
+
+        .details-link i {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .details-link:hover {
+            color: #1e3c72;
+            gap: 0.5rem;
+        }
+
+        /* ----- TRUST / FOOTER STRIP ----- */
+        .trust-footer {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            padding-top: 2rem;
+            margin-top: 0.5rem;
+        }
+
+        .trust-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.8rem;
+        }
+
+        .badge-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #35506b;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .badge-item i {
+            color: #2a5298;
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+
+        .legal {
+            display: flex;
+            gap: 1.8rem;
+            color: #6f8298;
+            font-size: 0.85rem;
+        }
+
+        .legal a {
+            color: #3d5a7a;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .legal a:hover {
+            color: #1e3c72;
+            text-decoration: underline;
+        }
+
+        /* ----- RESPONSIVE TOUCHES ----- */
+        @media (max-width: 700px) {
+            .gift-store {
+                padding: 2rem 1.2rem;
+                border-radius: 2rem;
+            }
+
+            .store-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.5rem;
+            }
+
+            .section-title h2 {
+                font-size: 1.6rem;
+            }
+
+            .card-grid {
+                gap: 1.5rem;
+            }
+
+            .trust-footer {
+                flex-direction: column;
+                gap: 1.5rem;
+                align-items: flex-start;
+            }
+
+            .trust-badges {
+                gap: 1rem;
+            }
+
+            .legal {
+                gap: 1.2rem;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .card-value .amount {
+                font-size: 1.8rem;
+            }
+
+            .card-actions {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.8rem;
+            }
+
+            .buy-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="gift-store">
+        <!-- HEADER -->
+        <header class="store-header">
+            <div class="brand">
+                <i class="fas fa-gift"></i>
+                <h1>Giftly<span>.store</span></h1>
+            </div>
+            <div class="cart-badge">
+                <i class="fas fa-shopping-bag"></i>
+                <span>cart</span>
+                <span class="item-count">0</span>
+            </div>
+        </header>
+
+        <!-- SECTION TITLE -->
+        <div class="section-title">
+            <h2>✨ pick a gift card</h2>
+            <p><i class="fas fa-bolt" style="margin-right: 0.3rem; color: #2a5298;"></i>instant delivery · no fees</p>
+        </div>
+
+        <!-- GIFT CARD GRID (six popular brands) -->
+        <div class="card-grid">
+            <!-- 1. Amazon -->
+            <div class="gift-card">
+                <div class="card-stripe"></div>
+                <div class="brand-logo">
+                    <i class="fab fa-amazon"></i>
+                    <div class="brand-name">Amazon <small>e-gift</small></div>
+                </div>
+                <div class="card-value">
+                    <div class="amount"><sup>$</sup>50</div>
+                    <div class="price-tag">$49.99</div>
+                </div>
+                <div class="card-desc">Millions of products, fast delivery. Perfect for any occasion.</div>
+                <div class="card-actions">
+                    <button class="buy-btn" onclick="addToCart('Amazon $50')"><i class="fas fa-cart-plus"></i> buy now</button>
+                    <button class="details-link"><i class="fas fa-chevron-circle-right"></i> details</button>
+                </div>
+            </div>
+
+            <!-- 2. Apple -->
+            <div class="gift-card">
+                <div class="card-stripe"></div>
+                <div class="brand-logo">
+                    <i class="fab fa-apple"></i>
+                    <div class="brand-name">Apple <small>store</small></div>
+                </div>
+                <div class="card-value">
+                    <div class="amount"><sup>$</sup>25</div>
+                    <div class="price-tag">$24.99</div>
+                </div>
+                <div class="card-desc">Apps, games, music, iCloud. For everything Apple.</div>
+                <div class="card-actions">
+                    <button class="buy-btn" onclick="addToCart('Apple $25')"><i class="fas fa-cart-plus"></i> buy now</button>
+                    <button class="details-link"><i class="fas fa-chevron-circle-right"></i> details</button>
+                </div>
+            </div>
+
+            <!-- 3. Starbucks -->
+            <div class="gift-card">
+                <div class="card-stripe"></div>
+                <div class="brand-logo">
+                    <i class="fas fa-mug-hot"></i>
+                    <div class="brand-name">Starbucks <small>card</small></div>
+                </div>
+                <div class="card-value">
+                    <div class="amount"><sup>$</sup>20</div>
+                    <div class="price-tag">$19.99</div>
+                </div>
+                <div class="card-desc">Coffee, tea, and treats. The perfect pick-me-up.</div>
+                <div class="card-actions">
+                    <button class="buy-btn" onclick="addToCart('Starbucks $20')"><i class="fas fa-cart-plus"></i> buy now</button>
+                    <button class="details-link"><i class="fas fa-chevron-circle-right"></i> details</button>
+                </div>
+            </div>
+
+            <!-- 4. Netflix -->
+            <div class="gift-card">
+                <div class="card-stripe"></div>
+                <div class="brand-logo">
+                    <i class="fas fa-tv"></i>
+                    <div class="brand-name">Netflix <small>gift</small></div>
+                </div>
+                <div class="card-value">
+                    <div class="amount"><sup>$</sup>30</div>
+                    <div class="price-tag">$29.99</div>
+                </div>
+                <div class="card-desc">Endless movies & series. Binge your favorites.</div>
+                <div class="card-actions">
+                    <button class="buy-btn" onclick="addToCart('Netflix $30')"><i class="fas fa-cart-plus"></i> buy now</button>
+                    <button class="details-link"><i class="fas fa-chevron-circle-right"></i> details</button>
+                </div>
+            </div>
+
+            <!-- 5. Steam -->
+            <div class="gift-card">
+                <div class="card-stripe"></div>
+                <div class="brand-logo">
+                    <i class="fab fa-steam"></i>
+                    <div class="brand-name">Steam <small>wallet</small></div>
+                </div>
+                <div class="card-value">
+                    <div class="amount"><sup>$</sup>50</div>
+                    <div class="price-tag">$48.99</div>
+                </div>
+                <div class="card-desc">Top up your Steam wallet. Games, DLC, and more.</div>
+                <div class="card-actions">
+                    <button class="buy-btn" onclick="addToCart('Steam $50')"><i class="fas fa-cart-plus"></i> buy now</button>
+                    <button class="details-link"><i class="fas fa-chevron-circle-right"></i> details</button>
+                </div>
+            </div>
+
+            <!-- 6. Google Play -->
+            <div class="gift-card">
+                <div class="card-stripe"></div>
+                <div class="brand-logo">
+                    <i class="fab fa-google-play"></i>
+                    <div class="brand-name">Google Play <small>code</small></div>
+                </div>
+                <div class="card-value">
+                    <div class="amount"><sup>$</sup>15</div>
+                    <div class="price-tag">$14.99</div>
+                </div>
+                <div class="card-desc">Apps, games, in‑app items. For Android lovers.</div>
+                <div class="card-actions">
+                    <button class="buy-btn" onclick="addToCart('Google Play $15')"><i class="fas fa-cart-plus"></i> buy now</button>
+                    <button class="details-link"><i class="fas fa-chevron-circle-right"></i> details</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRUST FOOTER -->
+        <footer class="trust-footer">
+            <div class="trust-badges">
+                <div class="badge-item"><i class="fas fa-shield-alt"></i> secure checkout</div>
+                <div class="badge-item"><i class="fas fa-bolt"></i> instant email delivery</div>
+                <div class="badge-item"><i class="fas fa-check-circle"></i> 100% authentic</div>
+            </div>
+            <div class="legal">
+                <a href="#">terms</a>
+                <a href="#">privacy</a>
+                <a href="#">support</a>
+            </div>
+        </footer>
+    </main>
+
+    <!-- tiny interactive demo: cart counter & alert (for preview) -->
+    <script>
+        (function() {
+            // simple cart simulation
+            let cartCount = 0;
+            const cartCounter = document.querySelector('.item-count');
+            const cartBadge = document.querySelector('.cart-badge');
+
+            // make the addToCart function globally available
+            window.addToCart = function(productName) {
+                cartCount += 1;
+                if (cartCounter) cartCounter.textContent = cartCount;
+
+                // subtle feedback on cart badge
+                if (cartBadge) {
+                    cartBadge.style.transform = 'scale(1.08)';
+                    cartBadge.style.transition = '0.15s';
+                    setTimeout(() => {
+                        cartBadge.style.transform = 'scale(1)';
+                    }, 150);
+                }
+
+                // friendly notification
+                alert(`✨ "${productName}" added to cart.\n(Total items: ${cartCount})`);
+            };
+
+            // optional: details buttons just show a placeholder
+            document.querySelectorAll('.details-link').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    alert('📋 Gift card details:\n• No expiration date\n• Instant email delivery\n• Redeemable online');
+                });
+            });
+        })();
+    </script>
+</body>
+</html>
